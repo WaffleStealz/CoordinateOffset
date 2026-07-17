@@ -5,7 +5,7 @@ api-version: "${apiVersion}"
 authors: [ joshuaprince ]
 contributors: [ Cavallium, WaffleStealz ]
 website: https://github.com/joshuaprince/CoordinateOffset
-description: Folia fork of CoordinateOffset — configurably obfuscate players' coordinates. Original by joshuaprince; Folia port by WaffleStealz.
+description: Folia fork of CoordinateOffset. 99.99% credit to joshuaprince and Cavallium; Folia port by WaffleStealz.
 folia-supported: true
 dependencies:
   server:

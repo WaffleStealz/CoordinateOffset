@@ -1,7 +1,7 @@
 CoordinateOffset (Folia fork)
 =============================
 
-> **Credit:** This project is almost entirely the work of [Joshua Prince (joshuaprince)](https://github.com/joshuaprince) and contributor [Cavallium](https://github.com/cavallium). [WaffleStealz](https://github.com/WaffleStealz) maintains this Folia port only. See upstream: [joshuaprince/CoordinateOffset](https://github.com/joshuaprince/CoordinateOffset) (AGPL-3.0).
+> **Credit:** 99.99% of this project is the work of [Joshua Prince (joshuaprince)](https://github.com/joshuaprince) and contributor [Cavallium](https://github.com/cavallium). [WaffleStealz](https://github.com/WaffleStealz) maintains the remaining Folia port only. Upstream: [joshuaprince/CoordinateOffset](https://github.com/joshuaprince/CoordinateOffset) (AGPL-3.0).
 
 **Fork of CoordinateOffset for Folia.** Built JARs go to [`target/`](target/).
 
