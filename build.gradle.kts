@@ -13,7 +13,7 @@ allprojects {
 
     group = "com.jtprince.coordinateoffset"
 
-    version = "6.1.8-folia-SNAPSHOT"
+    version = "6.1.8-folia"
 }
 
 subprojects {
