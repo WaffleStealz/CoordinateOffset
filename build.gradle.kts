@@ -6,13 +6,14 @@ allprojects {
     repositories {
         mavenCentral()
         maven("https://repo.papermc.io/repository/maven-public/")
-        maven("https://repo.codemc.org/repository/maven-releases/") // PacketEvents
-        maven("https://repo.codemc.org/repository/maven-snapshots/") // PacketEvents
-        maven("https://repo.opencollab.dev/main/") // Geyser
+        maven("https://repo.codemc.org/repository/maven-releases/")
+        maven("https://repo.codemc.org/repository/maven-snapshots/")
+        maven("https://repo.opencollab.dev/main/")
     }
 
     group = "com.jtprince.coordinateoffset"
-    version = "6.1.8-SNAPSHOT"
+
+    version = "6.1.8-folia-SNAPSHOT"
 }
 
 subprojects {

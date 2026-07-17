@@ -14,7 +14,7 @@ import java.util.UUID;
 @Configuration
 public class OffsetProviderOverrideConfigImpl implements OffsetProviderOverrideConfig {
     @SuppressWarnings("unused")
-    OffsetProviderOverrideConfigImpl() {} // required by ConfigLib
+    OffsetProviderOverrideConfigImpl() {}
 
     public OffsetProviderOverrideConfigImpl(
         String provider,
@@ -28,7 +28,7 @@ public class OffsetProviderOverrideConfigImpl implements OffsetProviderOverrideC
         this.player = player;
     }
 
-    private @Nullable String provider; // nullable so that we don't wipe half-configs; validated elsewhere
+    private @Nullable String provider;
     @Override
     public OffsetProvider getOffsetProvider() {
         CoordinateOffsetProviderConfig providers = CoordinateOffsetCore.get().getProviderConfig();
@@ -56,18 +56,9 @@ public class OffsetProviderOverrideConfigImpl implements OffsetProviderOverrideC
     @Deprecated
     private @Nullable UUID playerUuid;
 
-    /**
-     * Validate that the override is valid. Logs warning messages for any errors found.
-     *
-     * @param allProviders All known offset providers mapped by user-defined name.
-     * @param logWarning If true, logs a warning to the logger indicating why.
-     *
-     * @return true if the configuration is acceptable to use, false if the configuration is invalid and should be
-     *         ignored.
-     */
     public boolean validate(SequencedMap<String, OffsetProvider> allProviders, boolean logWarning) {
         if (playerUuid != null) {
-            // Migrate old `playerUuid` field (UUID only) to new `player` field (supports player names and UUIDs)
+
             if (player == null) {
                 player = playerUuid.toString();
             }

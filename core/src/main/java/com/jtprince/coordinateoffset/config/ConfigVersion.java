@@ -11,17 +11,13 @@ public class ConfigVersion {
     public static final int CURRENT = 6;
     public static final int ASSUMED_VERSION_IF_MISSING = 4;
 
-    /**
-     * @return true if after running this function, it is safe to write to the configPath; false if something went
-     *         wrong and we should avoid writing
-     */
     static boolean onLoadBaseConfig(Path configPath, CoordinateOffsetConfigBase config) {
         if (config.configVersion == null) {
             config.configVersion = ASSUMED_VERSION_IF_MISSING;
         }
 
         if (config.configVersion < CURRENT) {
-            // Outdated config; Make backup of previous config before allowing any file writes
+
             try {
                 Path dst = getBackupPath(configPath, config.configVersion);
                 CoordinateOffsetCore.get().getLogger().info("Detected new configuration version " + CURRENT +

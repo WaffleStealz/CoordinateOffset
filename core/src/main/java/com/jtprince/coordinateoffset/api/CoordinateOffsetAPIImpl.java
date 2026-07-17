@@ -33,7 +33,7 @@ public class CoordinateOffsetAPIImpl implements CoordinateOffsetAPI {
 
     @Override
     public OffsetChange regenerateOffset(OffsetPlayer player) {
-        CoordinateOffsetCore.get().getAdapter().assertMainThread("regenerateOffset"); // throws IllegalStateException
+        CoordinateOffsetCore.get().getAdapter().assertMainThread("regenerateOffset");
 
         OffsetChange result = core.getOffsetHolder().generateNextOffset(
             player, player.getLocation(), player.getLocation(), OffsetProviderContext.ProvideReason.PLUGIN_REGENERATE);
@@ -45,7 +45,7 @@ public class CoordinateOffsetAPIImpl implements CoordinateOffsetAPI {
 
     @Override
     public OffsetChange setOffset(OffsetPlayer player, Offset offset) {
-        CoordinateOffsetCore.get().getAdapter().assertMainThread("setOffset"); // throws IllegalStateException
+        CoordinateOffsetCore.get().getAdapter().assertMainThread("setOffset");
 
         OffsetChange result = core.getOffsetHolder().setNextOffsetByPlugin(player, offset);
         if (result.offsetChanged()) {
@@ -84,12 +84,12 @@ public class CoordinateOffsetAPIImpl implements CoordinateOffsetAPI {
         String className,
         Function<OffsetProviderConfig, OffsetProvider> deserializeFunction
     ) {
-        boolean isCore = false; // Only built-in providers are considered core. This is always false for API providers.
+        boolean isCore = false;
         core.getProviderRegistry().registerProviderClass(className, isCore, deserializeFunction);
     }
 
     public static void set(CoordinateOffsetAPI api) {
-        // Helper function to allow setting the singleton from CoordinateOffsetCore, but not expose it as a public API
+
         CoordinateOffset.set(api);
     }
 }

@@ -15,7 +15,7 @@ public class OffsetterServerMoveMinecart extends PacketOffsetter<WrapperPlayServ
 
     @Override
     public void offset(WrapperPlayServerMoveMinecart packet, FixedOffset offset, User user) {
-        // Note: As of 1.21.3, this packet is only used when the experimental minecart_improvements datapack is applied
+
         for (WrapperPlayServerMoveMinecart.MinecartStep step : packet.getLerpSteps()) {
             step.setPosition(apply(step.getPosition(), offset));
         }

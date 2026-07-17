@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class OffsetterServerNamedSoundEffect extends PacketOffsetter<WrapperPlayServerNamedSoundEffect> {
     public OffsetterServerNamedSoundEffect() {
-        // Removed around 1.19.2ish
+
         super(WrapperPlayServerNamedSoundEffect.class, PacketType.Play.Server.NAMED_SOUND_EFFECT);
     }
 

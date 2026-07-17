@@ -11,19 +11,13 @@ import java.util.function.Function;
 
 @NullMarked
 public class OffsetProviderClassRegistry {
-    /**
-     * Record for storing a registered provider class.
-     * @param className The class name of the provider, e.g. "RandomOffsetProvider".
-     * @param isCore If true, the provider is built-in to CoordinateOffset. If false, the provider was added by an
-     *               API consumer.
-     * @param deserializeFunction A function that can deserialize an OffsetProviderConfig into an OffsetProvider.
-     */
+
     public record RegisteredProviderClass(
         String className,
         boolean isCore,
         Function<OffsetProviderConfig, OffsetProvider> deserializeFunction
     ) {}
-    private final Map<String /* className */, RegisteredProviderClass> registeredProviders = new HashMap<>();
+    private final Map<String , RegisteredProviderClass> registeredProviders = new HashMap<>();
 
     public void registerProviderClass(
         String className,

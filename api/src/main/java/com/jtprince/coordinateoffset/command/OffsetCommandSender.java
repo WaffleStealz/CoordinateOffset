@@ -8,14 +8,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Collections;
 
-/**
- * Adapter interface representing a command sender in a Minecraft server.
- *
- * @param audience An audience that can be used to respond to this sender.
- * @param name String to represent the sender in various verbose messages.
- * @param player The player who sent this command, or <code>null</code> if the sender is not a player (console, command
- *               block, etc.)
- */
 @NullMarked
 public record OffsetCommandSender(Audience audience, String name, @Nullable OffsetPlayer player) implements ForwardingAudience {
     @Override

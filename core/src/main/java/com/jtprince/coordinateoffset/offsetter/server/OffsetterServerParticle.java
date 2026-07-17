@@ -23,8 +23,7 @@ public class OffsetterServerParticle extends PacketOffsetter<WrapperPlayServerPa
         packet.setPosition(apply(packet.getPosition(), offset));
 
         if (packet.getParticle().getData() instanceof ParticleVibrationData vibrationData) {
-            // startingPosition was only part of packet data up to 1.19.4. PE reports >1.19.4 with a zero vector.
-            //  Make sure not to offset this zero vector, or it will leak offsets.
+
             if (!vibrationData.getStartingPosition().equals(Vector3i.zero())) {
                 vibrationData.setStartingPosition(apply(vibrationData.getStartingPosition(), offset));
             }

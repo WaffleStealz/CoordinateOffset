@@ -1,0 +1,17 @@
+name: CoordinateOffset
+version: "${version}"
+main: com.jtprince.coordinateoffset.folia.CoordinateOffsetFoliaPlugin
+api-version: "${apiVersion}"
+authors: [ joshuaprince ]
+contributors: [ Cavallium, WaffleStealz ]
+website: https://github.com/joshuaprince/CoordinateOffset
+description: Folia fork of CoordinateOffset — configurably obfuscate players' coordinates. Original by joshuaprince; Folia port by WaffleStealz.
+folia-supported: true
+dependencies:
+  server:
+    packetevents:
+      load: BEFORE
+      required: true
+    GrimAC:
+      load: AFTER
+      required: false

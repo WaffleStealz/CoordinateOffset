@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class OffsetterServerSpawnPainting extends PacketOffsetter<WrapperPlayServerSpawnPainting> {
     public OffsetterServerSpawnPainting() {
-        // Removed in 1.19
+
         super(WrapperPlayServerSpawnPainting.class, PacketType.Play.Server.SPAWN_PAINTING);
     }
 

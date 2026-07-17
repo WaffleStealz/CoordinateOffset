@@ -12,10 +12,6 @@ import org.jspecify.annotations.NullMarked;
 
 import java.util.Map;
 
-/**
- * Wrapper for a PacketEvents Column (vertical slice of chunk sections) that returns offsetted
- * coordinates. (This was the cleanest way to wrap Column since it is not an interface)
- */
 @NullMarked
 public class OffsettedColumn extends Column {
     private final Column inner;
@@ -53,7 +49,7 @@ public class OffsettedColumn extends Column {
 
     @Override
     public TileEntity[] getTileEntities() {
-        // Tile entities are only absolutely positioned up to 1.17.1
+
         if (user.getClientVersion().isOlderThan(ClientVersion.V_1_18)) {
             TileEntity[] entities = inner.getTileEntities();
             for (TileEntity entity : entities) {
@@ -71,18 +67,12 @@ public class OffsettedColumn extends Column {
         return inner.hasHeightMaps();
     }
 
-    /**
-     * @deprecated in 1.21.5, use {@link #getHeightmaps()} instead
-     */
     @SuppressWarnings("deprecation")
     @Override
     public NBTCompound getHeightMaps() {
         return inner.getHeightMaps();
     }
 
-    /**
-     * Only used in 1.21.5+.
-     */
     @Override
     public Map<HeightmapType, long[]> getHeightmaps() {
         return inner.getHeightmaps();

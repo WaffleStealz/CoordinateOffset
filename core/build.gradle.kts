@@ -6,7 +6,7 @@ dependencies {
     compileOnly(libs.packetevents.api)
 
     implementation(project(":api"))
-    implementation(libs.configlib.paper) // TODO: Minor leak of Paper platform into core
+    implementation(libs.configlib.paper)
     implementation(libs.netty.buffer)
 
     testCompileOnly(libs.jspecify)

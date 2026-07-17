@@ -53,7 +53,6 @@ public class CoordinateOffsetCore {
         CoordinateOffsetAPI api = new CoordinateOffsetAPIImpl(core);
         CoordinateOffsetAPIImpl.set(api);
 
-        // Register built-in providers
         core.getProviderRegistry().registerProviderClass("ConstantOffsetProvider", true, ConstantOffsetProvider::deserialize);
         core.getProviderRegistry().registerProviderClass("RandomOffsetProvider", true, RandomOffsetProvider::deserialize);
         core.getProviderRegistry().registerProviderClass("ZeroAtLocationOffsetProvider", true, ZeroAtLocationOffsetProvider::deserialize);
@@ -63,20 +62,12 @@ public class CoordinateOffsetCore {
     }
 
     public static CoordinateOffsetCore bootstrapForTests(CoordinateOffsetAdapter adapter) {
-        // TODO: This is a hack to allow tests to run without a server environment
+
         CoordinateOffsetCore core = new CoordinateOffsetCore(adapter);
         CoordinateOffsetAPIImpl.set(new CoordinateOffsetAPIImpl(core));
         return core;
     }
 
-    /**
-     * Check if all any offset provider classes added by API consumers have had a chance to load.
-     *
-     * <p>The configuration module must not deserialize Offset Provider config until all provider classes have been
-     * registered, or else deserialization will throw an "unknown provider class" exception.</p>
-     *
-     * @return true if all provider classes are loaded, false if core has not yet received
-     */
     public boolean areAllProvidersLoaded() {
         return this.completedLoading;
     }

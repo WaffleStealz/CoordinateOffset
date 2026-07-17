@@ -15,7 +15,6 @@ public class OffsetterServerDebugSample extends PacketOffsetter<WrapperPlayServe
 
     @Override
     public void offset(WrapperPlayServerDebugSample packet, FixedOffset offset, User user) {
-        // TODO: Drill into Sample and offset any positions found there.
-        // Currently disabled entirely by default.
+
     }
 }

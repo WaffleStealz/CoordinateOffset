@@ -129,7 +129,7 @@ If you just want to upgrade, be aware of the following:
 - Certain particles (like ender dragon breath) cause a network protocol error. This is a PacketEvents bug:
   [packetevents#1373](https://github.com/retrooper/packetevents/issues/1373). Use a dev build of PacketEvents after
   they fix it (no CoordinateOffset update should be needed).
-- `allowUnsafeResetOnDistantTel[PaperOffsetSwapper.java](paper/src/main/java/com/jtprince/coordinateoffset/paper/adapter/PaperOffsetSwapper.java)eport` is not working in 5.0.0. Set `unsafeResetOnDistantTeleport` in config.yml or use
+- `allowUnsafeResetOnDistantTeleport` is not working in 5.0.0. Set `unsafeResetOnDistantTeleport` in config.yml or use
   the latest
   [GitHub actions build](https://github.com/joshuaprince/CoordinateOffset/actions/runs/18637737025/artifacts/4312757481).
 
@@ -172,7 +172,7 @@ please stay on [v4.0.16](https://github.com/joshuaprince/CoordinateOffset/releas
 - Remove `debug` config.yml setting
   - This setting was not intended for production use and caused plugin errors when enabled.
 - Various internal changes
-  - Restructure code to be in `api`, `core`, and `paper` subprojects for increased modularization
+  - Restructure code to be in `api`, `core`, and `folia` subprojects for increased modularization
   - Redesign offset change logic during join/respawn/world change to more accurately map to the game's protocol
   - Redesign offset storage logic to be more efficient with concurrency
 

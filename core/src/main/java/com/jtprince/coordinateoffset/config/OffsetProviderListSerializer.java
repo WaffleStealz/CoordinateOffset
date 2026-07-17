@@ -42,9 +42,7 @@ public class OffsetProviderListSerializer implements Serializer<SequencedMap<Str
             OffsetProviderClassRegistry.RegisteredProviderClass clazz =
                 CoordinateOffsetCore.get().getProviderRegistry().getRegisteredProviderClass(className);
             if (clazz == null) {
-                // Unknown provider class
-                // TODO: Replace full failure with best-effort loading for the remaining known provider classes
-                // Can't do this now because ConfigLib will just delete any unknown sections when doing update()
+
                 throw new IllegalArgumentException("Unknown provider class " + className + " for provider \"" + entry.getKey() + "\"");
             }
 

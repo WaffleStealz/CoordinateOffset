@@ -21,7 +21,7 @@ public class CoordinateOffsetConfigBase implements CoordinateOffsetConfig {
 
     @Comment({
         "",
-        "############################################################################ #", // keep this header at the top
+        "############################################################################ #",
         "################### General CoordinateOffset Configuration ################# #",
         "############################################################################ #",
         "",
@@ -105,7 +105,7 @@ public class CoordinateOffsetConfigBase implements CoordinateOffsetConfig {
         "Custom scaling for coordinates between worlds. Default overworld/end scale is",
         "  1.0 and default nether scale is 8.0. Offsets are divided by this value."
     })
-    @Nullable SequencedMap<String, Double> worldCoordinateScaleOverrides = null; // Not in default config
+    @Nullable SequencedMap<String, Double> worldCoordinateScaleOverrides = null;
     public SequencedMap<String, Double> getWorldCoordinateScaleOverrides() {
         return Objects.requireNonNullElseGet(worldCoordinateScaleOverrides, LinkedHashMap::new);
     }

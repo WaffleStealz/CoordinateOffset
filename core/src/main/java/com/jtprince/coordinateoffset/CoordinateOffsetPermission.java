@@ -33,7 +33,7 @@ public enum CoordinateOffsetPermission {
     public final String description;
 
     CoordinateOffsetPermission(String node, String description) {
-        // All permissions default to Operators only
+
         this.node = node;
         this.description = description;
     }

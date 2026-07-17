@@ -56,7 +56,7 @@ public record RegenerateConfig(
             }
             regenerateOnJoin = b;
         } else if (providerConfig.get("persistent") != null) {
-            // v5 and below compatibility - used to be "persistent", which is the inverse of regenerateOnJoin
+
             if (!(providerConfig.get("persistent") instanceof Boolean persistent)) {
                 throw new IllegalArgumentException("persistent must be a boolean");
             }
@@ -64,12 +64,12 @@ public record RegenerateConfig(
                 "Migrating legacy key persistent to regenerateOnJoin");
             regenerateOnJoin = !persistent;
         } else {
-            // v5 and below compatibility - providers with no key at all were implicitly non-persistent
+
             if (CoordinateOffsetCore.get().getConfig().getConfigVersion() != null
                 && CoordinateOffsetCore.get().getConfig().getConfigVersion() <= 5) {
-                regenerateOnJoin = true; // persistent=false
+                regenerateOnJoin = true;
             } else {
-                regenerateOnJoin = false; // in new configs, if the key gets deleted, restore without changing behavior
+                regenerateOnJoin = false;
             }
         }
 
@@ -92,7 +92,7 @@ public record RegenerateConfig(
             regenerateOnDeath = b;
         } else if (providerConfig.get("resetOnDeath") != null
             && providerConfig.get("resetOnDeath") instanceof Boolean b) {
-            // v5 and below compatibility - used to be called "resetOnDeath"
+
             regenerateOnDeath = b;
         }
 
@@ -104,7 +104,7 @@ public record RegenerateConfig(
             regenerateOnWorldChange = b;
         } else if (providerConfig.get("resetOnWorldChange") != null
             && providerConfig.get("resetOnWorldChange") instanceof Boolean b) {
-            // v5 and below compatibility - used to be called "resetOnWorldChange"
+
             regenerateOnWorldChange = b;
         }
 
@@ -116,7 +116,7 @@ public record RegenerateConfig(
             regenerateOnTeleport = b;
         } else if (providerConfig.get("resetOnDistantTeleport") != null
             && providerConfig.get("resetOnDistantTeleport") instanceof Boolean b) {
-            // v5 and below compatibility - used to be called "resetOnDistantTeleport"
+
             regenerateOnTeleport = b;
         }
 
@@ -127,7 +127,7 @@ public record RegenerateConfig(
             }
             minimumTeleportDistance = l.doubleValue();
         } else if (regenerateOnTeleport) {
-            // Write default min distance if regen on teleport is enabled but the key isn't present in config
+
             minimumTeleportDistance = DEFAULT_MINIMUM_TELEPORT_DISTANCE;
         }
 
@@ -136,9 +136,6 @@ public record RegenerateConfig(
             regenerateOnTeleport, minimumTeleportDistance, persistenceKeyOverride);
     }
 
-    /**
-     * Example metrics strings: "JDWT", "JxWx", "xxxx"
-     */
     public String getMetricsCharacterString() {
         @SuppressWarnings("StringBufferReplaceableByString")
         StringBuilder sb = new StringBuilder();

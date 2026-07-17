@@ -7,7 +7,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="ALTERNATIVE_JRE_PATH" value="25" />
     <method v="2">
-      <option name="RunConfigurationTask" enabled="true" run_configuration_name="CoordinateOffset [:paper:buildSnapshot]" run_configuration_type="GradleRunConfiguration" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="CoordinateOffset [:folia:buildSnapshot]" run_configuration_type="GradleRunConfiguration" />
     </method>
   </configuration>
 </component>

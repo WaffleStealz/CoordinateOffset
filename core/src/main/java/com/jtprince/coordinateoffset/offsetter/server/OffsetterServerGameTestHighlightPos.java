@@ -15,7 +15,7 @@ public class OffsetterServerGameTestHighlightPos extends PacketOffsetter<Wrapper
 
     @Override
     public void offset(WrapperPlayServerGameTestHighlightPos packet, FixedOffset offset, User user) {
-        /* NB: Untested. Not clear how to trigger this packet. */
+
         packet.setAbsolutePos(apply(packet.getAbsolutePos(), offset));
     }
 }

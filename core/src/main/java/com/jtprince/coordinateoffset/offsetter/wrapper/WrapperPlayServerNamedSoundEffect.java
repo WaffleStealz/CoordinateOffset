@@ -8,12 +8,12 @@ import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NonNull;
 
-@SuppressWarnings("unused") // Constructors are called reflectively
+@SuppressWarnings("unused")
 public class WrapperPlayServerNamedSoundEffect extends PacketWrapper<@NonNull WrapperPlayServerNamedSoundEffect> {
     private ResourceLocation soundName;
     private SoundCategory soundCategory;
     private Vector3i effectPosition;
-    private byte[] remainingData; // Lazily ignoring everything after position, since only position matters for this plugin
+    private byte[] remainingData;
 
     public WrapperPlayServerNamedSoundEffect(PacketSendEvent event) {
         super(event);
@@ -21,7 +21,6 @@ public class WrapperPlayServerNamedSoundEffect extends PacketWrapper<@NonNull Wr
 
     public WrapperPlayServerNamedSoundEffect(ResourceLocation soundName, SoundCategory soundCategory,
                                              Vector3i effectPosition, byte[] remainingData) {
-        // Removed around 1.19.2ish
         super(Server.NAMED_SOUND_EFFECT);
         this.soundName = soundName;
         this.soundCategory = soundCategory;
@@ -30,7 +29,6 @@ public class WrapperPlayServerNamedSoundEffect extends PacketWrapper<@NonNull Wr
     }
 
     public void read() {
-        // CO: Heavily based on PacketEvents builtin WrapperPlayServerSoundEffect
         this.soundName = this.readIdentifier();
         this.soundCategory = SoundCategory.fromId(readVarInt());
         effectPosition = new Vector3i(readInt(), readInt(), readInt());

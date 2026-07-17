@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class CoordinateOffsetConfigFull extends CoordinateOffsetConfigBase implements CoordinateOffsetProviderConfig {
     @Comment({
         "",
-        "############################################################################ #", // keep this header at the top
+        "############################################################################ #",
         "####################### Offset Provider Configuration ###################### #",
         "############################################################################ #",
         "",
@@ -61,16 +61,9 @@ public class CoordinateOffsetConfigFull extends CoordinateOffsetConfigBase imple
         return offsetProviders;
     }
 
-    /**
-     * Validate that the fully-loaded configuration is valid.
-     *
-     * @return true if the configuration is acceptable to proceed, false if there is a problem that prevents
-     *         the plugin from functioning correctly.
-     */
     public boolean validateBaseAndFullConfig() {
         Logger logger = CoordinateOffsetCore.get().getLogger();
 
-        // Default provider must exist
         try {
             getDefaultOffsetProviderConfig();
         } catch (NullPointerException e) {
@@ -84,10 +77,9 @@ public class CoordinateOffsetConfigFull extends CoordinateOffsetConfigBase imple
             return false;
         }
 
-        // Override rules must be valid, but not fatal
         for (OffsetProviderOverrideConfigImpl override : offsetProviderOverrides) {
             override.validate(offsetProviders, true);
-            // No early return; they'll be excluded in calls to getOffsetProviderOverrides
+
         }
 
         return true;

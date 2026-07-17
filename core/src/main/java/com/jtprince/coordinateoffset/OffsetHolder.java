@@ -22,16 +22,6 @@ public class OffsetHolder {
         this.offsetFactory = new OffsetFactory(core);
     }
 
-    /**
-     * Immutable container for player offset data.
-     *
-     * @param previousOffset Offset the player had before the most recent offset was applied. This may be the same as
-     *                       the current offset.
-     * @param currentOffset Offset the player has now and most packets will use.
-     * @param nextOffset Offset that the player will have as soon as the server sends the next "position" packet.
-     *                   Offset creation logic on the main thread writes to this field, then the Netty thread swaps it
-     *                   into current.
-     */
     private record PlayerOffsetData(
         OffsetData previousOffset,
         OffsetData currentOffset,
@@ -40,18 +30,6 @@ public class OffsetHolder {
     private final ConcurrentHashMap<UUID, PlayerOffsetData> playerOffsetData = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, Object> pendingDataLocks = new ConcurrentHashMap<>();
 
-    /**
-     * Get the current offset applied to a Player.
-     *
-     * <p>If the player's offset is about to change or changing, this will reflect the *previous* offset until the
-     * server sends a "position" packet.</p>
-     *
-     * This method is safe to call on any thread.
-     *
-     * @param player Player to query.
-     * @return The player's current offset in the world they are in.
-     * @throws NoSuchElementException If the player has no offset data or has not yet received a POSITION packet.
-     */
     public OffsetData getOffset(OffsetPlayer player) {
         PlayerOffsetData data = playerOffsetData.get(player.getUuid());
         if (data == null) {
@@ -60,18 +38,6 @@ public class OffsetHolder {
         return data.currentOffset;
     }
 
-    /**
-     * Look ahead at the next generated offset, which a Player will have after a "position" packet is sent.
-     *
-     * <p>This is useful for packets like RESPAWN, which refer to coordinates in the world a player is going to before
-     * sending a "position" packet to move the player to that world.</p>
-     *
-     * <p>This should only be called on a Netty thread, but is safe to call on any thread.</p>
-     *
-     * @param player Player to query.
-     * @return The player's next offset in the world they will soon be in, or the current offset if the player has no
-     *         next offset.
-     */
     public OffsetData getNextOffset(OffsetPlayer player) {
         PlayerOffsetData data = playerOffsetData.get(player.getUuid());
         if (data == null) {
@@ -80,30 +46,10 @@ public class OffsetHolder {
         return (data.nextOffset == null) ? data.currentOffset : data.nextOffset;
     }
 
-    /**
-     * Block the current thread until the player's offset has been generated, then get that offset.
-     *
-     * <p>This is useful for JOIN_GAME packets. These packets contain coordinates which must be offset, but the packets
-     * are sent concurrently with offset generation occurring on the main thread. See OffsetChangeSequencePaper.md
-     * in the project's <code>docs</code> directory for more information.</p>
-     *
-     * <p>This must only be called on a Netty thread. Blocking the main thread is not acceptable.</p>
-     *
-     * @param playerUuid Player to query.
-     * @param timeoutMillis Maximum time to block the thread if the player's offset has not yet been generated.
-     * @return The player's offset in the world they will soon be in.
-     * @throws TimeoutException If the player's offset has not yet been generated and the timeout has been reached.
-     */
     public FixedOffset waitForJoiningOffset(UUID playerUuid, int timeoutMillis) throws TimeoutException {
         PlayerOffsetData data = playerOffsetData.get(playerUuid);
         if (data == null && timeoutMillis > 0) {
-            /*
-             * Concurrency hack:
-             * Paper *concurrently* (a) calls PlayerJoinEvent and (b) sends a JOIN_GAME packet.
-             * The JOIN_GAME packet needs to be offsetted. But the offset isn't generated until PlayerJoinEvent
-             *   (PlayerSpawnLocationEvent is deprecated since 1.21.9).
-             * This hack is to block the Netty thread until the joining player gets an offset.
-             */
+
             Object pendingOffsetDataLock = pendingDataLocks.computeIfAbsent(playerUuid, uuid -> new Object());
             long now = System.currentTimeMillis();
             long deadline = now + timeoutMillis;
@@ -124,22 +70,6 @@ public class OffsetHolder {
         return data.currentOffset.offset();
     }
 
-    /**
-     * Generate or regenerate the offset a player will have next based on the context the player will be in.
-     * Store that offset in this holder.
-     *
-     * <p>This must only be called on the main server thread.</p>
-     *
-     * <p>Note that this does not immediately change the player's offset. Offset changes themselves happen in response
-     * to certain "position" packets. However, generating a <code>nextOffset</code> will set up an offset change for
-     * when the "position" packet occurs.</p>
-     *
-     * @param player Player to generate offset for.
-     * @param previousLocation Previous location of the player, or null if the player is joining the server.
-     * @param nextLocation Location the player is about to be.
-     * @param reason Reason for generating a new offset.
-     * @return Result containing the new offset and whether the offset changed.
-     */
     public OffsetChange generateNextOffset(
         OffsetPlayer player,
         @Nullable OffsetLocation previousLocation,
@@ -153,19 +83,6 @@ public class OffsetHolder {
         return setNextOffset(context.player().getUuid(), creation);
     }
 
-    /**
-     * Set a player's next offset to a specific offset based on an incoming command.
-     *
-     * <p>This must only be called on the main server thread.</p>
-     *
-     * <p>Note that this does not immediately change the player's offset. Offset changes themselves happen in response
-     * to certain "position" packets. However, generating a <code>nextOffset</code> will set up an offset change for
-     * when the "position" packet occurs.</p>
-     *
-     * @param player Player to set offset for.
-     * @param setCommand Command that triggered the offset change, containing the new offset.
-     * @return Result containing the new offset and whether the offset changed.
-     */
     public OffsetChange setNextOffsetByCommand(
         OffsetPlayer player,
         OffsetSetCommand setCommand
@@ -174,13 +91,10 @@ public class OffsetHolder {
         OffsetData currentOffsetData = (playerCache == null ? null : playerCache.currentOffset);
         Offset currentOffset = (currentOffsetData == null ? null : currentOffsetData.offset());
 
-        // The player's context is whatever their current status is when the command is run.
-        // The previous and current locations are the same since the player isn't teleporting.
         OffsetProviderContext context = new OffsetProviderContext(
             player, player.getLocation(), player.getLocation(), currentOffset,
             OffsetProviderContext.ProvideReason.COMMAND_SET);
 
-        // Inform current provider that the offset is being set by a command
         OffsetProvider affectedProvider = getAffectedProvider(currentOffsetData);
         if (affectedProvider != null) {
             try {
@@ -196,19 +110,6 @@ public class OffsetHolder {
         return setNextOffset(player.getUuid(), creation);
     }
 
-    /**
-     * Set a player's next offset to a specific offset based on a request from a third-party plugin.
-     *
-     * <p>This must only be called on the main server thread.</p>
-     *
-     * <p>Note that this does not immediately change the player's offset. Offset changes themselves happen in response
-     * to certain "position" packets. However, generating a <code>nextOffset</code> will set up an offset change for
-     * when the "position" packet occurs.</p>
-     *
-     * @param player Player to set offset for.
-     * @param newOffset New offset to set.
-     * @return Result containing the new offset and whether the offset changed.
-     */
     public OffsetChange setNextOffsetByPlugin(
         OffsetPlayer player,
         Offset newOffset
@@ -238,24 +139,20 @@ public class OffsetHolder {
             }
 
             if (existingOffsetData.currentOffset.offset().equals(newOffset.offset())) {
-                /*
-                 * Shortcut: If the player's actual offset components haven't changed, don't bother setting next.
-                 * Just immediately swap in the new offset.
-                 * This can happen if the offset source changed compared to what we have in current now.
-                 */
+
                 debugLog("Unchanged offset:" + existingOffsetData.previousOffset + " , " + newOffset + ", " + existingOffsetData.nextOffset);
                 return new PlayerOffsetData(
-                    existingOffsetData.previousOffset, // Keep previous the same
-                    newOffset,  // Immediately swap in to current
-                    existingOffsetData.nextOffset // Keep next the same
+                    existingOffsetData.previousOffset,
+                    newOffset,
+                    existingOffsetData.nextOffset
                 );
             }
 
             debugLog("Generate next: " + existingOffsetData.previousOffset + ", " + existingOffsetData.currentOffset + ", " + newOffset);
             return new PlayerOffsetData(
-                existingOffsetData.previousOffset, // Keep previous the same
-                existingOffsetData.currentOffset,  // Keep current the same
-                newOffset // Set next
+                existingOffsetData.previousOffset,
+                existingOffsetData.currentOffset,
+                newOffset
             );
         });
 
@@ -275,39 +172,23 @@ public class OffsetHolder {
         return offsetChange;
     }
 
-    /**
-     * Shift the player's <code>nextOffset</code> into <code>currentOffset</code>, and <code>currentOffset</code> into
-     * <code>previousOffset</code>. Following calls to {@link #getOffset(OffsetPlayer)} will return the new current
-     * offset.
-     *
-     * <p>This should only be called on a Netty thread, but is safe to call on any thread.</p>
-     *
-     * @param player Player to update.
-     */
     public void swapInNextOffset(OffsetPlayer player) {
         playerOffsetData.computeIfPresent(player.getUuid(), (uuid, existingOffsetData) -> {
             if (existingOffsetData.nextOffset == null) {
-                // No next offset, so don't swap in anything.
+
                 return existingOffsetData;
             }
             debugLog("Swap in next: " +
                 existingOffsetData.currentOffset + ", " +
                 existingOffsetData.nextOffset + ", null");
             return new PlayerOffsetData(
-                existingOffsetData.currentOffset, // Swap current into previous
-                existingOffsetData.nextOffset, // Swap next into current
-                null // Clear next
+                existingOffsetData.currentOffset,
+                existingOffsetData.nextOffset,
+                null
             );
         });
     }
 
-    /**
-     * Drop all data about a player from this holder. This should be called when a player disconnects from the server.
-     *
-     * <p>This method is safe to call on any thread.</p>
-     *
-     * @param uuid The UUID of the player to drop, presumably who is disconnecting from the server.
-     */
     public void remove(UUID uuid) {
         playerOffsetData.remove(uuid);
         pendingDataLocks.remove(uuid);
@@ -322,7 +203,7 @@ public class OffsetHolder {
         s.append(" from ");
         switch (offset.source()) {
             case OffsetData.Source.PermissionBypass ignored -> s.append("permission bypass");
-            case OffsetData.Source.BedrockBypass ignored -> { return; /* Warning logged in OffsetCreator on Join only */ }
+            case OffsetData.Source.BedrockBypass ignored -> { return;  }
             case OffsetData.Source.Provider p -> {
                 s.append("provider \"").append(p.provider().name).append("\"");
                 if (p.overrideRuleIndex() != null) {
@@ -345,7 +226,7 @@ public class OffsetHolder {
             case WORLD_CHANGE -> " (player changed worlds)";
             case TELEPORT -> " (player teleported)";
             case COMMAND_REGENERATE -> " (regenerated by command)";
-            case COMMAND_SET, PLUGIN_SET -> ""; // already mentioned by source
+            case COMMAND_SET, PLUGIN_SET -> "";
             case PLUGIN_REGENERATE -> " (regenerated by external plugin)";
         });
 
@@ -358,9 +239,6 @@ public class OffsetHolder {
         }
     }
 
-    /**
-     * Determine which offset provider should be informed of the offset change initiated by a command.
-     */
     private @Nullable OffsetProvider getAffectedProvider(@Nullable OffsetData currentOffset) {
         if (currentOffset == null) return null;
         OffsetProvider affectedProvider = switch (currentOffset.source()) {
@@ -372,7 +250,6 @@ public class OffsetHolder {
         };
         if (affectedProvider == null) return null;
 
-        // In case config was reloaded and the provider object changed, get the new provider object to inform
         OffsetProvider reloadedProvider =
             core.getProviderConfig().getAllOffsetProviderConfigs().get(affectedProvider.name);
         if (reloadedProvider != null) {

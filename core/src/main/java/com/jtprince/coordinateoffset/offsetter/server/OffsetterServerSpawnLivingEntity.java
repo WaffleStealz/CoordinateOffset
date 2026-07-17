@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class OffsetterServerSpawnLivingEntity extends PacketOffsetter<WrapperPlayServerSpawnLivingEntity> {
     public OffsetterServerSpawnLivingEntity() {
-        // Removed in 1.19
+
         super(WrapperPlayServerSpawnLivingEntity.class, PacketType.Play.Server.SPAWN_LIVING_ENTITY);
     }
 

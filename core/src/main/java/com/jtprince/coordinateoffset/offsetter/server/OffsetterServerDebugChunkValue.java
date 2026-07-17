@@ -16,7 +16,6 @@ public class OffsetterServerDebugChunkValue extends PacketOffsetter<WrapperPlayS
     @Override
     public void offset(WrapperPlayServerDebugChunkValue packet, FixedOffset offset, User user) {
         packet.setChunkPos(applyChunk(packet.getChunkPos(), offset));
-        // TODO: Look closer at fields like getUpdate() which probably can have entity locations in them.
-        // Currently disabled entirely by default.
+
     }
 }

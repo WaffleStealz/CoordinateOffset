@@ -22,4 +22,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CoordinateOffset-Package
-          path: paper/build/libs/*.jar
+          path: target/*.jar

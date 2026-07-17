@@ -16,7 +16,6 @@ public class OffsetterServerDebugBlockValue extends PacketOffsetter<WrapperPlayS
     @Override
     public void offset(WrapperPlayServerDebugBlockValue packet, FixedOffset offset, User user) {
         packet.setBlockPos(apply(packet.getBlockPos(), offset));
-        // TODO: Look closer at fields like getUpdate() which probably can have entity locations in them.
-        // Currently disabled entirely by default.
+
     }
 }

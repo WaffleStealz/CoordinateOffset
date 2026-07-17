@@ -4,19 +4,6 @@ import com.jtprince.coordinateoffset.adapter.OffsetLocation;
 import com.jtprince.coordinateoffset.api.CoordinateOffset;
 import org.jspecify.annotations.NullMarked;
 
-/**
- * Amount by which a player's clientside X and Z coordinates will appear shifted compared to their real position in a
- * world.
- *
- * <p>Fixed offsets are absolute in any coordinate space. For example, a fixed offset of <code>(800, 800)</code>
- * will <i>always</i> subtract 800 from the player's coordinates. This may break coordinate-based alignment between
- * nether portals <b>and make it possible to reverse-engineer offsets</b> through clever use of nether portals.</p>
- *
- * <p>A fixed offset is fully resolved and may be applied to coordinates directly.</p>
- *
- * @param x X offset value in blocks. Will be subtracted from the player's real X coordinate.
- * @param z Z offset value in blocks. Will be subtracted from the player's real Z coordinate.
- */
 @NullMarked
 public record FixedOffset(int x, int z) implements Offset {
     public FixedOffset {

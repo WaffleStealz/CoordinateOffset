@@ -17,12 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @NullMarked
 public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.PluginOffsetter {
-    /* Channel name changed in Distant Horizons 3.0 (DHSupport 0.13, Minecraft 26.1 timeframe). */
+
     private static final String CHANNEL_DHS_PRE_3_0 = "distant_horizons:message";
     private static final String CHANNEL_DHS_3_0_PLUS = "distant_horizons:msg";
     private static final Set<String> CHANNELS = Set.of(CHANNEL_DHS_PRE_3_0, CHANNEL_DHS_3_0_PLUS);
 
-    /* DHS protocol version is defined in DHS plugin PluginMessageHandler class  */
     private static final short SUPPORTED_PROTOCOL_VERSION_MIN = 11;
     private static final short SUPPORTED_PROTOCOL_VERSION_MAX = 15;
 
@@ -36,7 +35,7 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
         ;
 
         int getMessageId(int protocolVersion) {
-            /* IDs are defined in DHS plugin PluginMessageHandler class and may change across versions */
+
             if (protocolVersion < 14) {
                 return switch (this) {
                     case REMOTE_PLAYER_CONFIG -> 3;
@@ -46,7 +45,7 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
                     case FULL_DATA_PARTIAL_UPDATE -> 8;
                     case FULL_DATA_CHUNK -> 9;
                 };
-            } else {  // protocol 14+
+            } else {
                 return switch (this) {
                     case REMOTE_PLAYER_CONFIG -> 4;
                     case EXCEPTION -> 6;
@@ -59,7 +58,6 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
         }
     }
 
-    /* Exception message IDs. Defined in DHS plugin ExceptionMessage class */
     private static final int DH_MSG_EXCEPTION_REQUEST_REJECTED = 2;
     private static final int DH_MSG_EXCEPTION_SECTION_REQUIRES_SPLITTING = 3;
 
@@ -78,7 +76,7 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
         @Override
         public void offset(WrapperPlayServerPluginMessage packet, FixedOffset offset, User user) {
             if (activeChannelName == null) {
-                /* The first packet the server sends should have the channel name that all messages use. */
+
                 activeChannelName = packet.getChannelName();
             }
 
@@ -111,7 +109,7 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
 
                 int borderCenterX, borderCenterZ, borderRadius;
                 if (CoordinateOffsetCore.get().getConfig().getObfuscateWorldBorder()) {
-                    // Hide borders from packets - client may request out of bounds LODs and get errors
+
                     data.setInt(data.readerIndex(), 0);
                     borderCenterX = data.readInt();
 
@@ -121,7 +119,7 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
                     data.setInt(data.readerIndex(), 30_000_000);
                     borderRadius = data.readInt();
                 } else {
-                    // Offset borders appropriately
+
                     borderCenterX = data.getInt(data.readerIndex());
                     data.setInt(data.readerIndex(), borderCenterX - offset.x());
                     borderCenterX = data.readInt();
@@ -185,17 +183,12 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
                 int bufferId = data.readInt();
                 int dataLength = data.readInt();
 
-                /*
-                 * DH data chunk messages may be split into multiple packets.
-                 * Only the first packet contains a section position.
-                 * The last byte of the data indicates if this is the first packet.
-                 */
                 boolean isFirst = data.getBoolean(data.capacity() - 1);
                 if (isFirst) {
                     long sectionPosition = data.getLong(data.readerIndex());
                     DhSectionPosition sectionPositionObj = DhSectionPosition.fromLong(sectionPosition);
                     DhSectionPosition offsetted = sectionPositionObj.offset(offset);
-                    long offsettedLong = offsetted.toLong(); // TODO null check
+                    long offsettedLong = offsetted.toLong();
                     data.setLong(data.readerIndex(), offsettedLong);
                 }
             }
@@ -234,26 +227,13 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
                     long unOffsettedLong = unOffsetted.toLong();
                     data.setLong(data.readerIndex(), unOffsettedLong);
                 } else if (sectionPositionObj.detailLevel() != 6) {
-                    /*
-                     * The client may request a detail level that is not 6.
-                     * This poses a problem with offset alignment; to accurately apply or unapply an offset, the offset
-                     * must be exactly divisible by (2^(detail level)).
-                     * CoordinateOffset tries its best to ensure offsets are divisible by 64 (2^6) when DHS is
-                     * installed, but if the client requests detail level 9, offsets that aren't also divisible by 512
-                     * cannot be applied to those requests.
-                     * For now, DHS itself supports detail level 6 ONLY. We can avoid trying to offset any request that
-                     * DHS would reject anyway by dropping the request and sending the "exception" response ourselves.
-                     */
-                    packet.setChannelName(packet.getChannelName() + "_cancelled_by_coordinateoffset"); // This "cancels" the packet
+
+                    packet.setChannelName(packet.getChannelName() + "_cancelled_by_coordinateoffset");
                     sendDHExceptionMessage(user, protocolVersion, tracker,
-                        DH_MSG_EXCEPTION_SECTION_REQUIRES_SPLITTING, "Only detail level 6 is supported"); // Match DHS LodHandler.java message
+                        DH_MSG_EXCEPTION_SECTION_REQUIRES_SPLITTING, "Only detail level 6 is supported");
                 } else {
-                    /*
-                     * The player's offset may not be a multiple of 64.
-                     * Configuration offsetsAreMultiplesOfBlocks attempts to ensure this doesn't happen, but it's
-                     * still possible. In that case, drop the request and send a unique "exception" response.
-                     */
-                    packet.setChannelName(packet.getChannelName() + "_cancelled_by_coordinateoffset"); // This "cancels" the packet
+
+                    packet.setChannelName(packet.getChannelName() + "_cancelled_by_coordinateoffset");
                     sendDHExceptionMessage(user, protocolVersion, tracker,
                         DH_MSG_EXCEPTION_REQUEST_REJECTED, "Incompatible with current coordinate offset");
 
@@ -273,7 +253,7 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
         }
 
         private void sendDHExceptionMessage(User user, short protocolVersion, int tracker, int exceptionType, String message) {
-            // Match DHS ExceptionMessage.java packet format
+
             ByteBuf responseData = Unpooled.buffer();
             responseData.writeShort(protocolVersion);
             responseData.writeShort(DhPluginMessageType.EXCEPTION.getMessageId(protocolVersion));
@@ -290,26 +270,16 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
         }
     }
 
-    /**
-     * Distant Horizons splits the world into quadtree "sections" of varying detail. Each position is packed into a
-     * long, with bits making up the components listed in this record.
-     *
-     * @param detailLevel Scale factor for x and z. Coordinate components are multiplied by (2^(detail level)).
-     *                    As of DHSupport protocol 13, the server plugin always sends detail level 6 for a 64x64-block
-     *                    section.
-     * @param x X-coordinate of the section. Multiply by (2^(detail level)) to get the actual x-coordinate.
-     * @param z Z-coordinate of the section. Multiply by (2^(detail level)) to get the actual z-coordinate.
-     */
     record DhSectionPosition(int detailLevel, int x, int z) {
         static DhSectionPosition fromLong(long sectionPosition) {
-            // lowest 8 bits - detail level
+
             int detailLevel = (int) (sectionPosition & 0xFF);
-            // middle 28 bits - x
+
             int x = (int) ((sectionPosition >> 8) & 0x0FFFFFFF);
             if ((x & (1 << 27)) != 0) {
                 x |= ~0x0FFFFFFF;
             }
-            // upper 28 bits - z
+
             int z = (int) ((sectionPosition >> 36) & 0x0FFFFFFF);
             if ((z & (1 << 27)) != 0) {
                 z |= ~0x0FFFFFFF;
@@ -325,12 +295,6 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
             return data;
         }
 
-        /**
-         * Apply an offset to this section position.
-         * @param offset The offset to apply (subtract).
-         * @return A new section position, or null if either component cannot be offset because the component is not
-         *         a multiple of (2^(detail level)).
-         */
         @Nullable DhSectionPosition offset(FixedOffset offset) {
             if (offset.x() % (1 << detailLevel) != 0) {
                 return null;
@@ -343,9 +307,6 @@ public class PluginOffsetterDistantHorizons implements OffsetterPluginMessage.Pl
         }
     }
 
-    /**
-     * Cache container for deduplicating warning messages per player.
-     */
     private static class PlayerWarningCache {
         boolean hasWarnedProtocolVersion = false;
         boolean hasWarnedOffsetMultiple = false;

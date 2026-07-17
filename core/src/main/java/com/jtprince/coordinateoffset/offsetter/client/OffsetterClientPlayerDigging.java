@@ -12,11 +12,7 @@ import java.util.Set;
 
 @NullMarked
 public class OffsetterClientPlayerDigging extends PacketOffsetter<WrapperPlayClientPlayerDigging> {
-    /**
-     * Despite containing a block position, these actions do not actually refer to a block in the world. Minecraft
-     * protocol documentation specifies that the position included in packets for these actions should be 0/0/0.
-     * Offsetting these positions causes issues with anticheats that expect 0/0/0.
-     */
+
     private static final Set<DiggingAction> ACTIONS_WITH_ZERO_POSITION = Set.of(
             DiggingAction.DROP_ITEM_STACK,
             DiggingAction.DROP_ITEM,

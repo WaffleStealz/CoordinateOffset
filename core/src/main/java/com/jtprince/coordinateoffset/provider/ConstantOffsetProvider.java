@@ -84,7 +84,7 @@ public final class ConstantOffsetProvider extends CoreOffsetProvider {
 
     @Override
     public String getMetricsDetails() {
-        // No details reported for constant providers.
+
         return getMetricsClassName();
     }
 }

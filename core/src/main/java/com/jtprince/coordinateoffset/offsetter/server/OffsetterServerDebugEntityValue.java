@@ -15,7 +15,6 @@ public class OffsetterServerDebugEntityValue extends PacketOffsetter<WrapperPlay
 
     @Override
     public void offset(WrapperPlayServerDebugEntityValue packet, FixedOffset offset, User user) {
-        // TODO: Drill into DebugSubscription.Update and offset any positions found there.
-        // Currently disabled entirely by default.
+
     }
 }

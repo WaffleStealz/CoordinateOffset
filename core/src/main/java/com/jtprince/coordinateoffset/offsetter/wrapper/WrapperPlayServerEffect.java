@@ -6,11 +6,11 @@ import com.github.retrooper.packetevents.util.Vector3i;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jspecify.annotations.NonNull;
 
-@SuppressWarnings("unused") // Constructors are called reflectively
+@SuppressWarnings("unused")
 public class WrapperPlayServerEffect extends PacketWrapper<@NonNull WrapperPlayServerEffect> {
     private int eventId;
     private Vector3i position;
-    private byte[] remainingData; // Lazily ignoring everything after position, since only position matters for this plugin
+    private byte[] remainingData;
 
     public WrapperPlayServerEffect(PacketSendEvent event) {
         super(event);

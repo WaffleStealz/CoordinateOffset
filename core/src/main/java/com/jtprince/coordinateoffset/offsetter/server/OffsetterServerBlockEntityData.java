@@ -20,7 +20,6 @@ public class OffsetterServerBlockEntityData extends PacketOffsetter<WrapperPlayS
     public void offset(WrapperPlayServerBlockEntityData packet, FixedOffset offset, User user) {
         packet.setPosition(apply(packet.getPosition(), offset));
 
-        // TBD: I'm not sure which tile entity these are used for, but I'm keeping them from upstream just in case.
         if (packet.getNBT() != null) {
             NBTCompound nbt = packet.getNBT();
             NBTNumber x = nbt.getNumberTagOrNull("x");

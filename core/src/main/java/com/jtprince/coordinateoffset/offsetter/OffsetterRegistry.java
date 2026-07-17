@@ -22,11 +22,7 @@ public class OffsetterRegistry {
     private static final Map<PacketTypeCommon, PacketOffsetter> byPacketType;
 
     private static final List<PacketOffsetter> offsetters = List.of(
-            /*
-             * NOTE: Only PLAY packets are supported. The server can send LOGIN and CONFIGURATION packets before an
-             * offset is applied. If other packet type offsets are needed, be sure to update PacketOffsetAdapter to
-             * handle those packet types.
-             */
+
             new OffsetterClientClickWindow(),
             new OffsetterClientCreativeInventoryAction(),
             new OffsetterClientGenerateStructure(),
@@ -48,13 +44,10 @@ public class OffsetterRegistry {
             new OffsetterServerBlockChange(),
             new OffsetterServerBlockEntityData(),
             new OffsetterServerChunkData(),
-            // Start debug packets - completely disabled by default
+
             new OffsetterServerDebugBlockValue(),
             new OffsetterServerDebugChunkValue(),
-            // new OffsetterServerDebugEntityValue(), // TODO: see class file
-            // new OffsetterServerDebugEvent(),       // TODO: see class file
-            // new OffsetterServerDebugSample(),      // TODO: see class file
-            // End debug packets
+
             new OffsetterServerEffect(),
             new OffsetterServerEntityEquipment(),
             new OffsetterServerEntityMetadata(),
@@ -101,7 +94,7 @@ public class OffsetterRegistry {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Stacktraces thrown in static blocks are not logged
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

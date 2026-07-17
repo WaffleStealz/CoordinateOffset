@@ -14,19 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Container for offsetters of <code>minecraft:plugin_message</code> packets in both server and client directions.
- *
- * <p>Plugin messages have varying channel names and payload formats, requiring specialized offsetters for each.
- * This class provides an abstract outline for defining new "Plugin Offsetters", keyed on the channel name used by
- * any given plugin message.</p>
- *
- * <p>To define a new offsetter for a plugin message payload, see the other {@link PluginOffsetter} implementations
- * in this module and add any new ones to {@link #PLUGIN_OFFSETTER_OFFSETTERS}.</p>
- */
 @NullMarked
 public final class OffsetterPluginMessage {
-    /** Registry of all {@link PluginOffsetter} implementations. Add new ones here. */
+
     private static final List<PluginOffsetter> PLUGIN_OFFSETTER_OFFSETTERS = List.of(
         new PluginOffsetterDistantHorizons(),
         new PluginOffsetterWorldEditCUI()
@@ -51,12 +41,12 @@ public final class OffsetterPluginMessage {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Stacktraces thrown in static blocks are not logged
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
-    private OffsetterPluginMessage() {} // Static-only outer class
+    private OffsetterPluginMessage() {}
 
     public static class Client extends PacketOffsetter<WrapperPlayClientPluginMessage> {
         public Client() {
@@ -93,9 +83,6 @@ public final class OffsetterPluginMessage {
         }
     }
 
-    /**
-     * Interface for plugin message offsetters. Define one per plugin/mod that uses one or more plugin message channels.
-     */
     public interface PluginOffsetter {
         Set<String> getHandledChannels();
         default @Nullable Client getClientOffsetter() { return null; }

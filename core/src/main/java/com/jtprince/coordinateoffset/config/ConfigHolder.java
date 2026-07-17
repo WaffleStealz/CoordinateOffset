@@ -82,7 +82,6 @@ public class ConfigHolder {
         }
     }
 
-    /** @return true if the config was successfully loaded and validated, false if errors occurred. */
     public boolean loadFullConfig() {
         Path configPath = core.getAdapter().getConfigDir().resolve("config.yml");
 

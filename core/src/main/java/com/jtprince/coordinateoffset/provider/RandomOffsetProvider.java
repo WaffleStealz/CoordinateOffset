@@ -36,28 +36,27 @@ public final class RandomOffsetProvider extends CoreOffsetProvider {
 
     @Override
     public Offset provideOffset(OffsetProviderContext context) {
-        //noinspection DuplicatedCode (with ZeroAtLocationOffsetProvider)
+
         boolean willRegenerate = switch (context.reason()) {
             case JOIN -> regenerateConfig.isRegenOnJoin();
             case DEATH_RESPAWN -> regenerateConfig.isRegenOnDeath();
             case WORLD_CHANGE -> regenerateConfig.isRegenOnWorldChange();
-            case COMMAND_REGENERATE, PLUGIN_REGENERATE -> true; /* Always regenerate when explicitly called */
+            case COMMAND_REGENERATE, PLUGIN_REGENERATE -> true;
             case TELEPORT -> {
                 Objects.requireNonNull(context.previousLocation());
                 Double distanceTeleported = context.playerLocation().getDistance(context.previousLocation());
                 Objects.requireNonNull(distanceTeleported);
                 yield regenerateConfig.isRegenOnDistantTeleport(distanceTeleported);
             }
-            case COMMAND_SET, PLUGIN_SET -> false; /* Should be unreachable - offset providers are not called for this reason */
+            case COMMAND_SET, PLUGIN_SET -> false;
         };
         if (willRegenerate) {
             offsetStore.clear(context.player().getUuid());
         }
 
-        // Check if the provider already has an offset calculated that was not cleared for a regenerate
         ScalableOffset offset = offsetStore.get(context.player());
         if (offset == null) {
-            // Generate a new offset if we don't already have one for this player
+
             offset = Offset.random(randomBound);
             offsetStore.put(context.player(), offset);
         }

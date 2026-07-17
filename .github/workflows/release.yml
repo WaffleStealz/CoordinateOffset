@@ -24,7 +24,6 @@ jobs:
       - name: Extract version from tag
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
       - name: Extract changelog
-        # Find the section titled with the release version in CHANGELOG.md and extract it.
         run: |
           VERSION=$RELEASE_VERSION
           awk "/^# $VERSION\$/{flag=1; next} /^# /{flag=0} flag" CHANGELOG.md > release_changelog.md
@@ -37,18 +36,13 @@ jobs:
           cat release_changelog.md >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
       - name: Extract supported Minecraft versions
-        # Extract the supported Minecraft versions from the extracted changelog.
-        # Changelog must include a line right under the title between asterisks and with a colon, like:
-        # *Supported Minecraft servers: Paper 1.21.4-1.21.10*
         run: |
           SUPPORTED_MC_LINE=$(echo "$RELEASE_CHANGELOG" | awk '/^\*/{print; exit}')
-          # MC_SERVERS="Paper 1.21.4-1.21.10"
           MC_SERVERS=$(echo "$SUPPORTED_MC_LINE" | sed -E 's/^[*][^:]+:[[:space:]]*(.*)[*]$/\1/')
           if [ -z "$MC_SERVERS" ]; then
             echo "ERROR: Could not extract supported Minecraft servers string from CHANGELOG.md"
             exit 1
           fi
-          # MC_VERSIONS="1.21.4-1.21.10"
           MC_VERSIONS=$(printf '%s\n' "$MC_SERVERS" | sed 's/.* //')
           echo "SUPPORTED_MC_SERVERS=$MC_SERVERS" >> $GITHUB_ENV
           echo "SUPPORTED_MC_VERSIONS=$MC_VERSIONS" >> $GITHUB_ENV
@@ -64,14 +58,12 @@ jobs:
           draft: false
           prerelease: false
           make_latest: true
-          files: paper/build/libs/*.jar
+          files: target/*.jar
       - name: Create Hangar release
-        # TODO: Re-enable configuration cache, https://github.com/HangarMC/hangar-publish-plugin/issues/40
         run: ./gradlew publishPluginPublicationToHangar --no-configuration-cache
         env:
           HANGAR_TOKEN: ${{ secrets.HANGAR_TOKEN }}
       - name: Create Modrinth release
-        # TODO: Re-enable configuration cache, https://github.com/HangarMC/hangar-publish-plugin/issues/40
         run: ./gradlew modrinth --no-configuration-cache
         env:
           MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}

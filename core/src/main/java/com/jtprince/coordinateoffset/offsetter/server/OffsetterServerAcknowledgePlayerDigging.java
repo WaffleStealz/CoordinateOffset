@@ -10,7 +10,7 @@ import org.jspecify.annotations.NullMarked;
 @NullMarked
 public class OffsetterServerAcknowledgePlayerDigging extends PacketOffsetter<WrapperPlayServerAcknowledgePlayerDigging> {
     public OffsetterServerAcknowledgePlayerDigging() {
-        // Removed in 1.19 and replaced with ACKNOWLEDGE_BLOCK_CHANGES (which has no position)
+
         super(WrapperPlayServerAcknowledgePlayerDigging.class, PacketType.Play.Server.ACKNOWLEDGE_PLAYER_DIGGING);
     }
 

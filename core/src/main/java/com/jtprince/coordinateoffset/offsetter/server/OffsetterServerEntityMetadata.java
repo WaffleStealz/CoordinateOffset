@@ -34,10 +34,7 @@ public class OffsetterServerEntityMetadata extends PacketOffsetter<WrapperPlaySe
     }
 
     private static Object applyOffsetToEntityMeta(Object object, FixedOffset offset) {
-        /*
-         * Warning: Beware of adding Vector3d/Vector3f here as they are also used in display entity translation and
-         * scale values (and probably other ones that should not be offsetted)
-         */
+
         if (object instanceof Vector3i blockPosition) {
             return apply(blockPosition, offset);
         }

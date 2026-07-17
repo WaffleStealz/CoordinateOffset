@@ -26,7 +26,7 @@ public class OffsetterServerWaypoint extends PacketOffsetter<WrapperPlayServerWa
         } else if (oldInfo instanceof ChunkWaypointInfo info) {
             newInfo = new ChunkWaypointInfo(applyChunkX(info.getChunkX(), offset), applyChunkZ(info.getChunkZ(), offset));
         } else if (oldInfo instanceof AzimuthWaypointInfo || oldInfo instanceof EmptyWaypointInfo) {
-            // No offset needed for these types
+
             return;
         } else {
             CoordinateOffsetCore.get().getLogger().warning("Unknown waypoint type: " + oldInfo.getClass().getName());

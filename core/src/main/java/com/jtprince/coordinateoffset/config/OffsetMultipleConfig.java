@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 public class OffsetMultipleConfig {
     public static final OffsetMultipleConfig AUTO = new OffsetMultipleConfig(null);
 
-    private final @Nullable Integer valueConfigured; // null for "auto"
+    private final @Nullable Integer valueConfigured;
 
     private OffsetMultipleConfig(@Nullable Integer valueConfigured) {
         this.valueConfigured = valueConfigured;
@@ -18,7 +18,7 @@ public class OffsetMultipleConfig {
 
     public int getMultiple() {
         if (valueConfigured == null) {
-            // "auto" - use server minimum
+
             return CoordinateOffsetCore.get().getAdapter().getMinimumOffsetMultiple();
         } else {
             return valueConfigured;

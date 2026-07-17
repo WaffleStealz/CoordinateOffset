@@ -67,7 +67,7 @@ public abstract class PacketOffsetter<T extends PacketWrapper<T>> {
     }
 
     protected static WorldBlockPosition apply(WorldBlockPosition pos, FixedOffset offset) {
-        // TODO: When available, this could respect the offset of the specific world instead of the Player's current one
+
         return new WorldBlockPosition(pos.getWorld(),
                 pos.getBlockPosition().x - offset.x(), pos.getBlockPosition().y, pos.getBlockPosition().z - offset.z());
     }
@@ -102,19 +102,15 @@ public abstract class PacketOffsetter<T extends PacketWrapper<T>> {
     }
 
     protected static Vector3i applyTimes8(Vector3i vec, FixedOffset offset) {
-        // Used for sound effects
+
         return new Vector3i(vec.x - (offset.x() * 8), vec.y, vec.z - (offset.z() * 8));
     }
 
-    /**
-     * Apply an offset to all locational data components on an ItemStack.
-     * @return The modified ItemStack, or null if no locational data components exist on the ItemStack.
-     */
     protected static @Nullable ItemStack applyItemStack(ItemStack item, FixedOffset offset) {
         if (item == null) return null;
 
         if (item.getType() == ItemTypes.COMPASS) {
-            // Up to 1.20.4 only: NBT tags
+
             NBTCompound nbt = item.getNBT();
             if (nbt != null) {
                 NBTCompound lodestonePos = nbt.getCompoundTagOrNull("LodestonePos");
@@ -125,14 +121,11 @@ public abstract class PacketOffsetter<T extends PacketWrapper<T>> {
                 }
             }
 
-            // 1.20.5+ only: Components
             Optional<?> lodestoneComponent = null;
             try {
                 lodestoneComponent = item.getComponents().getPatches().get(ComponentTypes.LODESTONE_TRACKER);
             } catch (NoSuchMethodError e) {
-                // No error logged here because this Components branch only affects 1.20.5+, and PE will hit other
-                //  issues if an outdated version is installed. (i.e. this branch only happens on <1.20.5 where it does
-                //  not matter)
+
                 CoordinateOffsetCore.get().getLogger().fine("Outdated PacketEvents! Failed to get item components.");
             }
             if (lodestoneComponent != null
@@ -147,10 +140,6 @@ public abstract class PacketOffsetter<T extends PacketWrapper<T>> {
         return null;
     }
 
-    /**
-     * Unapply an offset to all locational data components on an ItemStack.
-     * @return The modified ItemStack, or null if no locational data components exist on the ItemStack.
-     */
     protected static @Nullable ItemStack unapplyItemStack(ItemStack item, FixedOffset offset) {
         return applyItemStack(item, offset.negate());
     }

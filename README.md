@@ -1,5 +1,16 @@
-CoordinateOffset
-================
+CoordinateOffset (Folia fork)
+=============================
+
+> **Credit:** This project is almost entirely the work of [Joshua Prince (joshuaprince)](https://github.com/joshuaprince) and contributor [Cavallium](https://github.com/cavallium). [WaffleStealz](https://github.com/WaffleStealz) maintains this Folia port only. See upstream: [joshuaprince/CoordinateOffset](https://github.com/joshuaprince/CoordinateOffset) (AGPL-3.0).
+
+**Fork of CoordinateOffset for Folia.** Built JARs go to [`target/`](target/). See [FOLIA.md](FOLIA.md) for Folia-specific changes.
+
+Requires [Folia](https://papermc.io/software/folia) for Minecraft 1.21.4+.
+
+---
+
+CoordinateOffset (upstream project description)
+===============================================
 **A Minecraft Paper plugin that configurably obfuscates players' coordinates.**
 
 ![Icon](.github/img/icon128.png)

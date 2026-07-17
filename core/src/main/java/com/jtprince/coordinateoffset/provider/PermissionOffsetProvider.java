@@ -67,9 +67,6 @@ public final class PermissionOffsetProvider extends CoreOffsetProvider {
             }
         }
 
-        // If multiple offsets are defined for the same player, we have to decide on just 1.
-        // The most important thing here is consistency, so arbitrarily, select the offset with components closest to
-        //  negative infinity and warn the console that there's contention.
         List<ScalableOffset> sortedOffsets = offsets.stream()
             .sorted((o1, o2) -> {
                 if (o1.x() == o2.x()) {
@@ -112,7 +109,7 @@ public final class PermissionOffsetProvider extends CoreOffsetProvider {
             throw new IllegalArgumentException("Provider \"" + config.getUserDefinedProviderName() +
                 ": Required key prefix for PermissionOffsetProvider is missing or invalid.");
         }
-        // Trim off trailing periods - someone may assume they are necessary.
+
         String prefix = s.get("prefix").toString().replaceAll("\\.+$", "");
 
         return new PermissionOffsetProvider(config.getUserDefinedProviderName(), prefix);
@@ -125,7 +122,7 @@ public final class PermissionOffsetProvider extends CoreOffsetProvider {
 
     @Override
     public String getMetricsDetails() {
-        // No details reported for permission providers.
+
         return getMetricsClassName();
     }
 }
